@@ -1,6 +1,8 @@
 import pytest
 from utils.data_store import TestDataStore
 from clients.post_client import PostClient
+from jsonschema import validate
+from utils.schemas import POST_SCHEMA
 
 
 class TestAPIChaining:
@@ -14,8 +16,10 @@ class TestAPIChaining:
         response = self.post_client.create_post(payload)
 
         assert response.status_code == 201
+        validate(instance=response.json(), schema=POST_SCHEMA)
+
         TestDataStore.POST_ID = response.json()['id']
-        print(f"\n[STEP 1] Created ID: {TestDataStore.POST_ID}")
+        print(f"\n[STEP 1] Created ID: {TestDataStore.POST_ID} & Schema Verified!")
 
     def test_step2_verify_chained_id(self):
         assert TestDataStore.POST_ID is not None, "Chaining failed: No ID found."

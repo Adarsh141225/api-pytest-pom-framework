@@ -1,5 +1,7 @@
 import pytest
 from clients.post_client import PostClient
+from jsonschema import validate
+from utils.schemas import POST_SCHEMA
 
 
 class TestPostApi:
@@ -48,8 +50,10 @@ class TestPostApi:
         data = response.json()
 
         assert response.status_code == 200
+        validate(instance=data, schema=POST_SCHEMA)
+
         assert data['title'] == expected_title
-        print(f"\n[Data-Driven] Verified ID {post_id} successfully.")
+        print(f"\n[Data-Driven] Verified ID {post_id} Schema & Title successfully.")
 
     def test_partial_update_with_patch(self):
         payload = {"title": "Updated via PATCH"}
@@ -57,5 +61,7 @@ class TestPostApi:
         response = self.post_client.patch_post(1,payload)
 
         assert response.status_code == 200
+        validate(instance=response.json(), schema=POST_SCHEMA)
+
         assert response.json()["title"] == "Updated via PATCH"
-        print("\nPATCH successful: Only the title was modified.")
+        print("\nPATCH successful: Schema and Title verified.")
