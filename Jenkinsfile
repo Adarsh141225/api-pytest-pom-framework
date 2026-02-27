@@ -3,26 +3,22 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                //
                 checkout scm
             }
         }
-        stage('Build Docker Image') {
+        stage('Install Dependencies') {
             steps {
-                //
-                sh 'docker build -t sdet-framework-image .'
+                sh 'pip install -r requirements.txt'
             }
         }
         stage('Run Automation') {
             steps {
-                //
-                sh 'docker run sdet-framework-image'
+                sh 'pytest --html=report.html'
             }
         }
     }
     post {
         always {
-            //
             archiveArtifacts artifacts: 'report.html'
         }
     }
