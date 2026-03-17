@@ -21,9 +21,10 @@ def driver():
 
 
 def test_user_authentication_flow(driver):
+    """Verify valid user can login and
+        reach dashboard successfully."""
     driver.get("https://opensource-demo.orangehrmlive.com/")
 
-    # Wait for page load!
     WebDriverWait(driver, 20).until(
         EC.presence_of_element_located(
             (By.NAME, "username")))
@@ -31,7 +32,6 @@ def test_user_authentication_flow(driver):
     login_page = LoginPage(driver)
     login_page.execute_login("Admin", "admin123")
 
-    # Wait for dashboard!
     WebDriverWait(driver, 20).until(
         EC.url_contains("dashboard"))
 
@@ -40,9 +40,10 @@ def test_user_authentication_flow(driver):
 
 
 def test_invalid_login(driver):
+    """Verify invalid credentials keep
+        user on login page."""
     driver.get("https://opensource-demo.orangehrmlive.com/")
 
-    # Wait for page!
     WebDriverWait(driver, 20).until(
         EC.presence_of_element_located(
             (By.NAME, "username")))
@@ -50,7 +51,6 @@ def test_invalid_login(driver):
     login_page = LoginPage(driver)
     login_page.execute_login("wronguser", "wrongpass")
 
-    # Should stay on login page!
     assert "dashboard" not in driver.current_url
     print("Invalid login test passed!")
 
@@ -60,6 +60,8 @@ def test_invalid_login(driver):
     ("wronguser", "wrongpass", False),
 ])
 def test_login_parametrize(driver, username, password, expected):
+    """Verify login with multiple data sets —
+        valid and invalid credentials."""
     driver.get("https://opensource-demo.orangehrmlive.com/")
     WebDriverWait(driver, 20).until(
         EC.presence_of_element_located((By.NAME, "username")))
@@ -75,21 +77,20 @@ def test_login_parametrize(driver, username, password, expected):
 
 
 def test_locators(driver):
+    """Demonstrate all locator types —
+        NAME, XPATH, CSS_SELECTOR."""
     driver.get(
         "https://opensource-demo.orangehrmlive.com/")
     WebDriverWait(driver, 20).until(
         EC.presence_of_element_located((By.NAME, "username")))
 
-    # Using NAME
     driver.find_element(
         By.NAME, "username").send_keys("Admin")
 
-    # Using XPATH for password
     driver.find_element(
         By.XPATH,
         "//input[@name='password']").send_keys("admin123")
 
-    # Using CSS for button
     driver.find_element(
         By.CSS_SELECTOR,
         "button[type='submit']").click()
